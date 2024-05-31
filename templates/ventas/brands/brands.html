@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col text-end">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearBrand">
+                Add New Brands
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="card text-center my-5" style="border-radius: 25px;">
+                <div class="card-header d-flex justify-content-between mx-3" >
+                    <h2>{{ title2 }}</h2>
+                    <form class="d-flex" role="search">
+                        <input class="form-control me-2 border-black" type="search" name="q" id="search-input" placeholder="Search ID"
+                            aria-label="Search" value="{{ request.GET.q }}">
+                        <button class="btn btn-outline-success" type="submit" id="search-button">Search</button>
+                    </form>
+                </div>
+                <div class="card-body">
+                    <div class="table">
+                        <table class="table table-striped text-center table-sm">
+                            <thead>
+                                <tr>
+                                    <th class="bg-secondary">ID</th>
+                                    <th class="bg-secondary">Description</th>
+                                    <th class="bg-secondary">User</th>
+                                    <th class="bg-secondary">State</th>
+                                    <th class="bg-secondary">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for brand in brands %}
+                                <tr>
+                                    <td class="text-center">{{ brand.id }}</td>
+                                    <td class="text-center">{{ brand.description }}</td>
+                                    <td class="text-center">{{ brand.user }}</td>
+                                    {% if brand.state %}
+                                    <td class="text-center"><i class="bi bi-check-circle-fill text-success"></i></td>
+                                    {% else %}
+                                    <td class="text-center"><i class="bi bi-x-circle-fill text-danger"></i></td>
+                                    {% endif %}
+                                    <td class="text-center">
+                                        <div class="dropdown-center">
+                                            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button"
+                                                data-bs-toggle="dropdown" aria-expanded="false">
+                                                Actions
+                                            </button>
+                                            <ul class="dropdown-menu sm">
+                                                <li><a href="{% url 'ventas:update_brand' brand.id %}"
+                                                        class="dropdown-item">✏️ Edit</a></li>
+                                                <li>
+                                                    <hr class="dropdown-divider">
+                                                </li>
+                                                <li><a href="{% url 'ventas:delete_brand' brand.id %}"
+                                                        class="dropdown-item">❌ Delete</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% if not brands %}
+                        <p class="text-center">No Brands found</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade {% if form.errors %}show{% endif %}" id="modalCrearBrand" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="{% if form.errors %}false{% else %}true{% endif %}" style="{% if form.errors %}display: block;{% endif %}">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-black"  id="nav" style="border-radius : 15px">
+
+            <div class="modal-header text-warning justify-content-between">
+                <h3><b>Create Brand</b></h3>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">X</button>
+            </div>
+
+            <div class="modal-body text-white">
+                <form method="POST" id="BrandsForm">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-sm-6 mb-3">
+                            <label for="id_description" class="form-label">Brand:</label>
+                            <input type="text" name="description" class="form-control" maxlength="100" required id="id_description">
+                            {% if form.description.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.description.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+    
+                        <div class="col-sm-6 mb-3">
+                            <label for="id_user" class="form-label">User:</label>
+                            <select name="user" class="form-select" required id="id_user">
+                                {% if user.is_authenticated %}
+                                <option value="{{ user.id }}" selected>{{ user.username.upper }}</option>
+                                {% endif %}
+
+                                {% for user in users %}
+                                    <option value="{{ user.id }}">{{ user.username }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+    
+                        <div class="col-sm-6 my-3">
+                            <label for="id_state" class="form-label">State:</label>
+                            <input type="checkbox" name="state" class="form-check-input" id="id_state" checked>
+                        </div>
+    
+                        <div class="col-12 text-end border-white mt-3">
+                            <button type="submit" class="btn btn-primary w-25 mx-3">Save</button>
+                        </div>
+                    </div>
+                
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

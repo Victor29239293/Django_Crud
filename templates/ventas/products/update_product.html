@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="mx-4">
+        <a class="btn btn-danger btn-sm px-4" href="{% url 'ventas:products' %}">Atras</a>
+    </div>
+    {% if error_message %}
+    <div class="alert alert-danger d-flex align-items-center mt-5" role="alert" id="error-alert">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <div>
+            {{ error_message }}
+        </div>
+        <button type="button" class="btn-close mx-2" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col my-5 pt-5">
+            <div class="card text-center bg-black w-75 mx-auto" id="nav">
+                <div class="card-header text-info border-white">
+                    <h3 class="text-warning">{{ title2 }}</h3>
+                </div>
+                <div class="card-body text-white">
+                    <form method="POST" enctype="multipart/form-data" id="ProductForm">
+                        {% csrf_token %}
+                        <div class="row justify-content-center mb-4">
+                            <div class="col-auto">
+                                <div id="image-container" class="mb-3">
+                                    {% if product.image %}
+                                    <img src="{{ product.image.url }}" alt="Supplier Image" class="img-thumbnail" id="current-image" width="200" style="border-radius: 25px;">
+                                    {% endif %}
+                                    <img id="image-preview" class="img-thumbnail" style="display:none;" width="200" style="border-radius: 25px;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6 mb-3">
+                                <label for="id_description" class="form-label text-black">Article:</label>
+                                <input type="text" name="description" class="form-control" required value="{{ product.description }}" id="id_description">
+                            </div>
+
+                            <div class="col-sm-6 mb-3">
+                                <label for="id_price" class="form-label text-black">Price:</label>
+                                <input type="number" name="price" class="form-control" step="0.01" min="0.01" required value="{{ product.price }}" id="id_price">
+                            </div>
+
+                            <div class="row m-0 p-0 align-items-center">
+                                <div class="col-sm-6 mb-3">
+                                    <label for="id_stock" class="form-label text-black">Stock:</label>
+                                    <input type="number" name="stock" class="form-control" required value="{{ product.stock }}" id="id_stock" aria-describedby="stockHelpInline" step="0" min="1">
+                                </div>
+                                <div class="col-sm-6 mb-3 mt-4">
+                                    <span id="stockHelpInline" class="form-text text-black">
+                                        Stock must be between 0 and 10000 units.
+                                    </span>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <div class="col-sm-6 mb-3">
+                                <label for="id_brand" class="form-label text-black">Brand:</label>
+                                <select name="brand" class="form-select text-black" required id="id_brand">
+                                    {% for brand in brands %}
+                                        <option value="{{ brand.id }}" {% if product.brand_id == brand.id %}selected{% endif %}>{{ brand.description }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-sm-6 mb-3">
+                                <label for="id_expiration_date" class="form-label text-black">Expiration Date:</label>
+                                <input type="datetime-local" name="expiration_date" class="form-control text-black" value="{{ product.expiration_date|date:'Y-m-d\\TH:i' }}" required id="id_expiration_date">
+                            </div>
+
+                            <div class="col-sm-6 mb-3">
+                                <label for="id_line" class="form-label text-black">Linea:</label>
+                                <select name="line" class="form-select text-black" id="id_line">
+                                    {% for value, label in status_choices %}
+                                    <option value="{{ value }}" {% if product.line == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-sm-6 mb-3">
+                                <label for="id_categories" class="form-label text-black">Category:</label>
+                                <select name="categories" class="form-select text-black" required id="id_categories" multiple>
+                                    {% for category in categories %}
+                                        <option value="{{ category.id }}" 
+                                            {% if category.id in selected_categories %}selected{% endif %}>
+                                            {{ category.description }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-sm-6 mb-3">
+                                <label for="id_image" class="form-label text-black">Image:</label>
+                                <input type="file" name="image" class="form-control text-black" accept="image/*" id="id_image">
+                            </div>
+
+                            <hr>
+
+                            <div class="col-sm-6 mb-3">
+                                <label for="id_supplier" class="form-label text-black">Supplier:</label>
+                                <select name="supplier" class="form-select text-black" required id="id_supplier">
+                                    {% for supplier in suppliers %}
+                                        <option value="{{ supplier.id }}" {% if product.supplier_id == supplier.id %}selected{% endif %}>{{ supplier.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-sm-6 mb-3">
+                                <label for="id_user" class="form-label text-black">User:</label>
+                                <select name="user" class="form-select text-black" required id="id_user">
+                                    {% for user in users %}
+                                    <option value="{{ user.id }}" {% if product.user_id == user.id %}selected{% endif %}>{{ user.username }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-sm-6 my-3">
+                                <label for="id_state" class="form-label">State:</label>
+                                <input type="checkbox" name="state" class="form-check-input" id="id_state" {% if product.state %}checked{% endif %}>
+                            </div>
+
+                            <div class="col-12 text-end border-white mt-3">
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('id_image').addEventListener('change', function(event) {
+        const [file] = event.target.files;
+        if (file) {
+            const preview = document.getElementById('image-preview');
+            const currentImage = document.getElementById('current-image');
+            
+            // Hide the current image
+            if (currentImage) {
+                currentImage.style.display = 'none';
+            }
+            
+            // Show the new image preview
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = 'block';
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="mx-4">
+        <a class="btn btn-danger btn-sm px-4" href="{% url 'ventas:suppliers' %}">Atras</a>
+    </div>
+    {% if error_message %}
+    <div class="alert alert-danger d-flex align-items-center mt-5" role="alert" id="error-alert">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <div>
+            {{ error_message }}
+        </div>
+        <button type="button" class="btn-close mx-2" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col my-5 pt-5">
+            <div class="card text-center w-75 mx-auto" id="nav">
+                <div class="card-header text-black border-white">
+                    <h3 class="text-warning">{{ title2 }}</h3>
+                </div>
+                <div class="card-body text-white">
+                    <form method="POST" enctype="multipart/form-data" id="SupplierForm">
+                        {% csrf_token %}
+                        <div class="row justify-content-center mb-4">
+                            <div class="col-auto">
+                                <div id="image-container" class="mb-3">
+                                    {% if supplier.image %}
+                                    <img src="{{ supplier.image.url }}" alt="Supplier Image" class="img-thumbnail" id="current-image" width="200"  style="border-radius: 25px;">
+                                    {% endif %}
+                                    <img id="image-preview" class="img-thumbnail" style="display:none;" width="200"  style="border-radius: 25px;" style="border-radius: 25px;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6 mb-3">
+                                <label for="id_name" class="form-label">Name:</label>
+                                {{ form.name }}
+                            </div>
+
+                            <div class="col-sm-6 mb-3">
+                                <label for="id_ruc" class="form-label">RUC:</label>
+                                {{ form.ruc }}
+                            </div>
+
+                            <div class="col-sm-6 mb-3">
+                                <label for="id_address" class="form-label">Address:</label>
+                                {{ form.address }}
+                            </div>
+
+                            <div class="col-sm-6 mb-3">
+                                <label for="id_phone" class="form-label">Phone:</label>
+                                {{ form.phone }}
+                            </div>
+
+                            <div class="col-sm-6 mb-3">
+                                <label for="id_user" class="form-label">User:</label>
+                                {{ form.user }}
+                            </div>
+
+                            <div class="col-sm-6 mb-3">
+                                <label for="id_image" class="form-label">Image:</label>
+                                
+                                {{ form.image }}
+                            </div>
+
+                            <div class="col-sm-6 mb-3">
+                                <label for="id_state" class="form-label">State:</label>
+                                {{ form.state }}
+                            </div>
+
+                            <div class="col-12 text-end border-white mt-3">
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('id_image').addEventListener('change', function(event) {
+        const [file] = event.target.files;
+        if (file) {
+            const preview = document.getElementById('image-preview');
+            const currentImage = document.getElementById('current-image');
+            
+            // Hide the current image
+            if (currentImage) {
+                currentImage.style.display = 'none';
+            }
+            
+            // Show the new image preview
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = 'block';
+        }
+    });
+</script>
+{% endblock %}

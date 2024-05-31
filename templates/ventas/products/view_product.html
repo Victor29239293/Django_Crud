@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-2">
+    <div class="row">
+        <div class="col-12 d-flex justify-content-between">
+            <div class="d-flex align-items-center">
+                <a class="btn btn-danger btn-sm px-4" href="{% url 'ventas:products' %}">Atrás</a>
+            </div>
+            <h1 class="text-black">{{ title2 }}</h1>
+            <div></div>
+        </div>
+    </div>
+    <br><br>
+
+    <div class="row">
+        <div class="col-12 text-center">
+            <div class="image-zoom-container">
+                <img src="{{ product.image.url }}" alt="Producto imagen" class="img-fluid zoom-image" style="border-radius: 50px;">
+            </div>
+        </div>
+    </div>
+    <br><br>
+   
+    <table class="table table-bordered mt-3 "  >
+        <thead class="thead-dark" >
+            <tr>
+                <th class="bg-secondary">ID</th>
+                <th  class="bg-secondary">Description</th>
+                <th class="bg-secondary">Supplier</th>
+                <th class="bg-secondary">Price</th>
+                <th class="bg-secondary">Stock</th>
+                <th class="bg-secondary">Created</th>
+                <th class="bg-secondary">Updated</th>
+                <th class="bg-secondary">State</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="text-center">{{ product.id }}</td>
+                <td class="text-center">{{ product.description }}</td>
+                <td class="text-center">{{ product.supplier }}</td>
+                <td class="text-center">{{ product.price }}</td>
+                <td class="text-center">{{ product.stock }}</td>
+                <td class="text-center">{{ product.created|date:"d/m/Y , P" }}</td>
+                <td class="text-center">{{ product.updated|date:"d/m/Y , P" }}</td>
+                {% if product.state %}
+                <td class="text-center"><i class="bi bi-check-circle-fill text-success"></i>
+                </td>
+                {% else %}
+                <td class="text-center"><i class="bi bi-x-circle-fill text-danger"></i></td>
+                {% endif %}
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock content %}

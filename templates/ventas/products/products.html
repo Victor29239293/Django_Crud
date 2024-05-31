@@ -1,0 +1,235 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-5 ">
+
+    {% if error_message %}
+    <div class="alert alert-danger d-flex align-items-center mt-5" role="alert" id="error-alert">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <div>
+            {{ error_message }}
+        </div>
+        <button type="button" class="btn-close mx-2" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+    
+    <div class="row">
+        <div class="col text-end">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearProducto">
+                Add New Product
+            </button>
+        </div>
+    </div>
+    <div class="row" >
+        <div class="col" >
+            <div class="card text-center my-5" style="border-radius: 25px;" >
+                <div class="card-header d-flex justify-content-between mx-3" >
+                    <h2 class="text-black">{{title2}}</h2>
+                    <form class="d-flex" role="search">
+                        <input class="form-control me-2 border-black" type="search" name="q" id="search-input" placeholder="Search Description"
+                            aria-label="Search" value="{{ request.GET.q }}">
+                        <button class="btn btn-outline-success border-black" type="submit" id="search-button">Search</button>
+                    </form>
+                </div>
+                <div class="card-body" >
+                    <div class="table" >
+                        <table class="table table-striped text-center table-sm  " >
+                            <thead >
+                                <tr>
+                                    <th class="bg-secondary">Image</th>
+                                    <th class="bg-secondary">ID</th>
+                                    <th class="bg-secondary">Description</th>
+                                    <th class="bg-secondary">Suppliers</th>
+                                    <th class="bg-secondary">Price</th>
+                                    <th class="bg-secondary">Stock</th>
+                                    <th class="bg-secondary">Created</th>
+                                    <th class="bg-secondary">updated</th>
+                                    <th class="bg-secondary">State</th>
+                                    
+                                    <th class="bg-secondary">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for product in products %}
+                                <tr>
+                                    <td class="text-center">
+                                       
+                                        <img src="{{ product.image.url }}" alt="{{ product.description }}" style="width: 50px; height: 50px; object-fit: cover;">
+                                    </td>
+                                    <td class="text-center">{{ product.id }}</td>
+                                    <td class="text-center">{{ product.description }}</td>
+                                    <td class="text-center">{{ product.supplier }}</td>
+                                    <td class="text-center">{{ product.price }}</td>
+                                    <td class="text-center">{{ product.stock }}</td>
+                                    <td class="text-center">{{ product.created|date:"d/m/Y , P" }}</td>
+                                    <td class="text-center">{{ product.updated|date:"d/m/Y , P" }}</td>
+                                    {% if product.state %}
+                                    <td class="text-center"><i class="bi bi-check-circle-fill text-success"></i>
+                                    </td>
+                                    {% else %}
+                                    <td class="text-center"><i class="bi bi-x-circle-fill text-danger"></i></td>
+                                    {% endif %}
+                                    <td class="text-center">
+                                        <div class="dropdown-center">
+                                            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button"
+                                                data-bs-toggle="dropdown" aria-expanded="false">
+                                                Actions
+                                            </button>
+                                            <ul class="dropdown-menu sm">
+                                                <li><a href="{% url 'ventas:view_product' product.id %}"
+                                                        class="dropdown-item">👁️ View</a></li>
+                                                <li>
+                                                    <hr class="dropdown-divider">
+                                                </li>
+                                                <li><a href="{% url 'ventas:update_product' product.id %}"
+                                                        class="dropdown-item">✏️ Edit</a></li>
+                                                <li>
+                                                    <hr class="dropdown-divider">
+                                                </li>
+                                                <li><a href="{% url 'ventas:delete_product' product.id %}"
+                                                        class="dropdown-item">❌ Delete</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% if not products %}
+                        <p class="text-center">No products found</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalCrearProducto" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-black"  style="border-radius : 15px"  id="nav">
+
+            <div class="modal-header text-warning justify-content-between" >
+                <h3><b>Create Product</b></h3>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">X</button>
+            </div>
+
+            <div class="modal-body text-white">
+                <form method="POST" id="productForm">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-sm-6 mb-3">
+                            <label for="id_description" class="form-label">Article:</label>
+                            <input type="text" name="description" class="form-control" required=""
+                                id="id_description">
+                        </div>
+
+                        <div class="col-sm-6 mb-3">
+                            <label for="id_price" class="form-label">Price:</label>
+                            <input type="number" name="price" class="form-control" step="0.01" min="0.01"
+                                required="" id="id_price">
+                        </div>
+
+                        <div class="row m-0 p-0 align-items-center">
+                            <div class="col-sm-6 mb-3">
+                                <label for="id_stock" class="form-label">Stock:</label>
+                                <input type="number" name="stock" class="form-control" step="10000" min="1" required="" id="id_stock" aria-describedby="stockHelpInline">
+                            </div>
+                            <div class="col-sm-6 mb-3 mt-4">
+                                <span id="stockHelpInline" class="form-text">
+                                    Stock must be between 0 and 10000 units.
+                                </span>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="col-sm-6 mb-3">
+                            <label for="id_brand" class="form-label">Brand:</label>
+                            <select name="brand" class="form-select" required="" id="id_brand">
+                                <option value="" selected>---------</option>
+                                {% if brands %}
+                                    {% for brand in brands %}
+                                        <option value="{{ brand.id }}">{{ brand.description }}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+
+                        <div class="col-sm-6 mb-3">
+                            <label for="id_expiration_date" class="form-label">Expiration Date:</label>
+                            <input type="date" name="expiration_date" class="form-control" value=""
+                                required="" id="id_expiration_date">
+                        </div>
+                        
+                        <div class="col-sm-6 mb-3">
+                            <label for="id_line" class="form-label">Linea:</label>
+                            <select name="line" class="form-select" id="id_line">
+                                {% for value, label in status_choices %}
+                                <option value="{{ value }}" {% if form.instance.line == value %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-sm-6 mb-3">
+                            <label for="id_categories" class="form-label">Category:</label>
+                            <select name="categories" class="form-select" required="" id="id_categories" multiple>
+                                {% if categories %}
+                                    {% for category in categories %}
+                                        <option value="{{ category.id }}">{{ category.description }}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+
+                        <div class="col-sm-6 mb-3">
+                            <label for="id_image" class="form-label">Image:</label>
+                            <input type="file" name="image" class="form-control" accept="image/*" id="id_image">
+                        </div>
+
+                        <hr>
+                        
+                        <div class="col-sm-6 mb-3">
+                            <label for="id_supplier" class="form-label">Supplier:</label>
+                            <select name="supplier" class="form-select" required id="id_supplier">
+                                <option value="" selected>---------</option>
+                                {% if suppliers %}
+                                {% for supplier in suppliers %}
+                                    <option value="{{ supplier.id }}">{{ supplier.name }}</option>
+                                {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+
+                        <div class="col-sm-6 mb-3">
+                            <label for="id_user" class="form-label">User:</label>
+                            <select name="user" class="form-select" required id="id_user">
+                                {% if user.is_authenticated %}
+                                <option value="{{ user.id }}" selected>{{ user.username.upper }}</option>
+                                {% endif %}
+                                {% if users %}
+                                {% for user in users %}
+                                <option value="{{ user.id }}">{{ user.username }}</option>
+                                {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+
+                        <div class="col-sm-6 my-3">
+                            <label for="id_state" class="form-label">State:</label>
+                            <input type="checkbox" name="state" class="form-check-input" id="id_state" checked>
+                        </div>
+
+                        <div class="col-12 text-end border-white mt-3">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

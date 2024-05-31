@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="mx-4">
+        <a class="btn btn-danger btn-sm px-4" href="{% url 'ventas:brands' %}">Atrás</a>
+    </div>
+    {% if error_message %}
+    <div class="alert alert-danger d-flex align-items-center mt-5" role="alert" id="error-alert">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <div>
+            {{ error_message }}
+        </div>
+        <button type="button" class="btn-close mx-2" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+    <div class="row">
+        <div class="col mt-5 pt-5">
+            <div class="card text-center bg-black w-50 mx-auto">
+                <div class="card-header text-info border-white">
+                    <h3>{{ title2 }}</h3>
+                </div>
+                <div class="card-body text-white">
+                    <form method="POST" id="BrandsForm">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-sm-6 mb-3">
+                                <label for="id_description" class="form-label">Brand:</label>
+                                <input type="text" name="description" class="form-control" value="{{ brand.description }}" required id="id_description">
+                            </div>
+        
+                            <div class="col-sm-6 mb-3">
+                                <label for="id_user" class="form-label">User:</label>
+                                <select name="user" class="form-select" required id="id_user">
+                                    {% for user in users %}
+                                    <option value="{{ user.id }}" {% if brand.user_id == user.id %}selected{% endif %}>{{ user.username }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+        
+                            <div class="col-sm-6 my-3">
+                                <label for="id_state" class="form-label">State:</label>
+                                <input type="checkbox" name="state" class="form-check-input" id="id_state" {% if brand.state %}checked{% endif %}>
+                            </div>
+        
+                            <div class="col-12 text-end border-white mt-3">
+                                <button type="submit" class="btn btn-primary w-25 mx-3">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

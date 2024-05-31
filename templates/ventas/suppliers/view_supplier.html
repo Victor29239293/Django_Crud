@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-1">
+    <div class="mx-4">
+        <a class="btn btn-danger btn-sm px-4" href="{% url 'ventas:suppliers' %}">Atras</a>
+    </div>
+
+    <div class="text-center mt-4">
+        <h2 class="text-black ">{{ title2 }}</h2>
+        {% if supplier.image %}
+            <img src="{{ supplier.image.url }}" alt="Supplier Image" class="img-thumbnail my-4" width="200" style="border-radius: 25px;">
+        
+        {% endif %}
+    </div>
+
+    <table class="table table-bordered w-75 mx-auto text-center">
+        <thead>
+            <tr>
+                <th class="text-center bg-secondary">ID</th>
+                <th class="text-center bg-secondary">Name</th>
+                <th class="text-center bg-secondary">RUC</th>
+                <th class="text-center bg-secondary">Address</th>
+                <th class="text-center bg-secondary">Phone</th>
+                <th class="text-center bg-secondary">User</th>
+                <th class="text-center bg-secondary">Created</th>
+                <th class="text-center bg-secondary">Updated</th>
+                <th class="text-center bg-secondary">State</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="text-center" >{{ supplier.id }}</td>
+                <td class="text-center">{{ supplier.name.upper }}</td>
+                <td class="text-center">{{ supplier.ruc }}</td>
+                <td class="text-center">{{ supplier.address }}</td>
+                <td class="text-center">{{ supplier.phone }}</td>
+                <td class="text-center">{{ supplier.user.username.upper }}</td>
+                <td class="text-center">{{ supplier.created|date:"d/m/Y, P" }}</td>
+                <td class="text-center">{{ supplier.updated|date:"d/m/Y, P" }}</td>
+                {% if supplier.state %}
+                <td class="text-center"><i class="bi bi-check-circle-fill text-success"></i>
+                </td>
+                {% else %}
+                <td class="text-center"><i class="bi bi-x-circle-fill text-danger"></i></td>
+                {% endif %}
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="text-center mt-5 " >
+        <h2 class="text-black " >Related Products</h2>
+        
+        {% if related_products %}
+            <table class="table table-bordered w-75 mx-auto text-center" >
+                <thead>
+                    <tr>
+                        <th class="text-center bg-secondary">ID</th>
+                        <th class="text-center bg-secondary">Description</th>
+                        <th class="text-center bg-secondary">Price</th>
+                        <th class="text-center bg-secondary">Stock</th>
+                        <th class="text-center bg-secondary">Created</th>
+                        <th class="text-center bg-secondary">Updated</th>
+                        <th class="text-center bg-secondary">State</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in related_products %}
+                        <tr>
+                            <td class="text-center">{{ product.id }}</td>
+                            <td class="text-center">{{ product.description }}</td>
+                            <td class="text-center">{{ product.price }}</td>
+                            <td class="text-center">{{ product.stock }}</td>
+                            <td class="text-center">{{ product.created|date:"d/m/Y, P" }}</td>
+                            <td class="text-center">{{ product.updated|date:"d/m/Y, P" }}</td>
+                            {% if product.state %}
+                            <td class="text-center"><i class="bi bi-check-circle-fill text-success"></i>
+                            </td>
+                            {% else %}
+                            <td class="text-center"><i class="bi bi-x-circle-fill text-danger"></i></td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No related products found.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

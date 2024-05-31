@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col text-end">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearSupplier">
+                Add New Supplier
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="card text-center my-5" style="border-radius: 25px;">
+                <div class="card-header d-flex justify-content-between mx-3">
+                    <h2>{{ title2 }}</h2>
+                    <form class="d-flex" role="search" method="GET">
+                        <input class="form-control me-2 border-black" type="search" name="q" id="search-input" placeholder="Search Ruc"
+                               aria-label="Search" value="{{ request.GET.q }}">
+                        <button class="btn btn-outline-success" type="submit" id="search-button">Search</button>
+                    </form>
+                </div>
+                <div class="card-body">
+                    <div class="table">
+                        <table class="table table-striped text-center table-sm">
+                            <thead>
+                                <tr>
+                                    <th class="bg-secondary">Icons</th>
+                                    <th class="bg-secondary">ID</th>
+                                    <th class="bg-secondary">Name</th>
+                                    <th class="bg-secondary">Ruc</th>
+                                    <th class="bg-secondary">Address</th>
+                                    <th class="bg-secondary">Phone</th>
+                                    <th class="bg-secondary">User</th>
+                                    <th class="bg-secondary">State</th>
+                                    <th class="bg-secondary">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for supplier in suppliers %}
+                                <tr>
+                                    <td class="text-center">
+                                        <img src="{{ supplier.image.url }}" alt="{{ supplier.name }}"
+                                             style="width: 50px; height: 50px; object-fit: cover;">
+                                    </td>
+                                    <td class="text-center">{{ supplier.id }}</td>
+                                    <td class="text-center">{{ supplier.name }}</td>
+                                    <td class="text-center">{{ supplier.ruc }}</td>
+                                    <td class="text-center">{{ supplier.address }}</td>
+                                    <td class="text-center">{{ supplier.phone }}</td>
+                                    <td class="text-center">{{ supplier.user }}</td>
+                                    {% if supplier.state %}
+                                    <td class="text-center"><i class="bi bi-check-circle-fill text-success"></i></td>
+                                    {% else %}
+                                    <td class="text-center"><i class="bi bi-x-circle-fill text-danger"></i></td>
+                                    {% endif %}
+                                    <td class="text-center">
+                                        <div class="dropdown-center">
+                                            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button"
+                                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                                Actions
+                                            </button>
+                                            <ul class="dropdown-menu sm">
+                                                <li><a href="{% url 'ventas:view_supplier' supplier.id %}"
+                                                       class="dropdown-item">👁️ View</a></li>
+                                                <hr class="dropdown-divider">
+                                                <li><a href="{% url 'ventas:update_supplier' supplier.id %}"
+                                                       class="dropdown-item">✏️ Edit</a></li>
+                                                <li>
+                                                    <hr class="dropdown-divider">
+                                                </li>
+                                                <li><a href="{% url 'ventas:delete_supplier' supplier.id %}"
+                                                       class="dropdown-item">❌ Delete</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% if not suppliers %}
+                        <p class="text-center">No suppliers found</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalCrearSupplier" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-black"  id="nav" style="border-radius : 15px">
+            <div class="modal-header text-warning justify-content-between">
+                <h3><b>Create Suppliers</b></h3>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">X</button>
+            </div>
+            <div class="modal-body text-white">
+                <form method="POST" id="SupplierForm">
+                    {% csrf_token %}
+                    <div class="row">
+                        {% for field in form %}
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ field.label_tag }}
+                                {{ field }}
+                                {% if field.help_text %}
+                                <div class="form-text">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
