@@ -74,8 +74,8 @@ def signin(request):
 def products(request):
     company = Company.objects.first()
     products = Product.objects.all().order_by('id','state')
-    brands = Brand.objects.all()
-    categories = Category.objects.all()
+    brands = Brand.objects.filter(state=True)
+    categories = Category.objects.filter(state=True)
     suppliers = Supplier.objects.filter(state=True)   # Filtrar proveedores activos
     users = User.objects.all()
     status_choices = Product.Status.choices
